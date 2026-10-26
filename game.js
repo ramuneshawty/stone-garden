@@ -67,6 +67,7 @@ buttons.forEach((stone,i)=>{
   stone.addEventListener('pointercancel',e=>finish(e,true));
   stone.addEventListener('lostpointercapture',e=>{if(drag)finish(e,true)});
 });
+var endScreenTimer;
 function renderEndScreen(){
   let screen=document.getElementById('endScreen');
   if(!screen){
@@ -77,11 +78,19 @@ function renderEndScreen(){
     document.getElementById('viewBoard').onclick=()=>{screen.hidden=true;$('restart').focus()};
     screen.addEventListener('keydown',e=>{if(e.key==='Escape'){screen.hidden=true;$('restart').focus()}});
   }
-  const wasHidden=screen.hidden;
-  screen.hidden=!ended;
+  if(!ended){clearTimeout(endScreenTimer);endScreenTimer=null;screen.hidden=true;return}
   if(ended){
     $('endTitle').textContent=ended==='A peaceful draw'?'A peaceful draw':mode==='computer'?(ended==='Jade wins'?'You win!':'Ivory wins') : ended;
     $('endSummary').textContent=ended==='A peaceful draw'?'A balanced game. Ready for another round?':mode==='computer'?(ended==='Jade wins'?'A clever trap. Your garden, your victory.':'A quiet lesson. Try a new path next round.'):'Both opposing stones are blocked. Ready to play again?';
-    if(wasHidden)$('playAgain').focus({preventScroll:true});
+    if(screen.hidden&&!endScreenTimer){
+      const result=ended;
+      const delay=window.matchMedia('(prefers-reduced-motion: reduce)').matches?250:700;
+      endScreenTimer=setTimeout(()=>{
+        endScreenTimer=null;
+        if(ended!==result)return;
+        screen.hidden=false;
+        $('playAgain').focus({preventScroll:true});
+      },delay);
+    }
   }
 }
