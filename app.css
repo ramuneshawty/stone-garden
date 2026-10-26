@@ -1,1 +1,4 @@
 html{min-height:100%;overflow-x:hidden}body{min-height:100dvh;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}button{touch-action:manipulation}select{font-size:16px}@media(display-mode:standalone){header{padding-top:14px;padding-bottom:14px}main{padding-top:22px}}@media(max-width:440px){.intro{align-items:flex-start}.intro>div{min-width:0}h1{font-size:34px}.title-help{gap:0 10px}.layout{gap:20px}}
+
+/* Reserve board gestures for play; the rest of the page remains scrollable. */
+.arena,.arena .board,.arena .node{touch-action:none;overscroll-behavior:contain;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
