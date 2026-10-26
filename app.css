@@ -3,7 +3,7 @@ html{min-height:100%;overflow-x:hidden}body{min-height:100dvh;padding:env(safe-a
 /* Reserve board gestures for play; the rest of the page remains scrollable. */
 .arena,.arena .board,.arena .node{touch-action:none;overscroll-behavior:contain;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 
-.end-screen[hidden]{display:none}.arena .end-screen{position:absolute;inset:0;z-index:20;display:grid;place-items:center;padding:20px;background:#14392c9c;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
+.arena .end-screen[hidden]{display:none!important}.arena .end-screen{position:absolute;inset:0;z-index:20;display:grid;place-items:center;padding:20px;background:#14392c9c;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
 .end-card{width:min(330px,100%);padding:30px 25px;background:#f3ecdc;color:#293d33;text-align:center;border:1px solid #b8b392;box-shadow:0 15px 50px #0b251c55}
 .end-emblem{margin:18px auto 10px;background:#a2402c;color:#f3ecdc;width:42px;height:46px;display:grid;place-items:center;font:28px Georgia,serif;transform:rotate(-3deg)}
 .end-card h2{font:32px Georgia,serif;margin:16px 0 10px}.end-card p{font-size:13px;line-height:1.7;margin:0 0 24px;color:#63705c}.end-card .primary{min-height:48px;background:#a2402c;border-radius:2px}.end-view{background:none;border:0;color:#53634d;text-decoration:underline;font-size:12px;padding:14px;min-height:44px}.end-card button:focus-visible{outline:3px solid #c79542;outline-offset:3px}
