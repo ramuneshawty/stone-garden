@@ -6,7 +6,7 @@ function best(b,p){let ms=legal(b,p);const score=m=>-(states.get(key(next(b,m),3
 let animating=false;let b,p,selected,history,seen,ended,mode='computer',timer=null,hintNode=-1;const $=id=>document.getElementById(id);const buttons=coords.map(([x,y],i)=>{let el=document.createElement('button');el.className='node';el.style.left=x+'%';el.style.top=y+'%';el.onclick=()=>tap(i);$('board').append(el);return el});
 function reset(){clearTimeout(timer);b=[2,2,0,1,1];p=1;selected=-1;history=[];seen=[key(b,p)];ended='';hintNode=-1;render()}
 function render(){buttons.forEach(el=>el.getAnimations().forEach(a=>a.cancel()));const ms=legal(b,p),ai=mode==='computer'&&p===2&&!ended;buttons.forEach((el,i)=>{el.className='node'+(b[i]?' stone '+(b[i]===1?'jade':'ivory'):'')+(selected===i?' selected':'')+(selected>=0&&ms.some(m=>m[0]===selected&&m[1]===i)?' legal':'')+(hintNode===i?' hint':'');el.setAttribute('aria-label',names[i]+': '+(b[i]===1?'jade stone':b[i]===2?'ivory stone':'empty'));el.disabled=!!ended||ai});$('moves').textContent='MOVE '+String(history.length+1).padStart(2,'0');$('turntag').textContent=ended?'GAME COMPLETE':(p===1?'JADE':'IVORY')+' TO MOVE';$('status').textContent=ended||(ai?'Thinking…':mode==='computer'?'Your turn':(p===1?'Jade':'Ivory')+'’s turn');$('detail').textContent=ended?(ended==='A peaceful draw'?'This position repeated three times. Try a new approach.':'Both opposing stones are blocked. Play another round?'):'Select a stone, then tap the glowing empty point.';$('message').textContent=ended|| (ai?'Ivory is considering the next move.':selected>=0?'Tap the glowing point to move.':'Choose '+(p===1?'a jade':'an ivory')+' stone.');$('undo').disabled=!history.length;$('hint').disabled=!!ended||ai;$('jadeLabel').textContent=mode==='computer'?'You · Jade':'Player 1 · Jade';$('ivoryLabel').textContent=mode==='computer'?'Computer · Ivory':'Player 2 · Ivory';$('difficultyWrap').hidden=mode!=='computer';renderEndScreen();}
-function move(m,origin){const movingPlayer=p;history.push({b:b.slice(),p,seen:seen.slice()});b=next(b,m);p=3-p;selected=-1;hintNode=-1;seen.push(key(b,p));if(!legal(b,p).length)ended=(p===1?'Ivory':'Jade')+' wins';else if(seen.filter(k=>k===key(b,p)).length>=3)ended='A peaceful draw';render();animateMove(m,movingPlayer,origin);if(!ended&&mode==='computer'&&p===2){timer=setTimeout(()=>{let ms=$('difficulty').value==='casual'&&Math.random()<.32?legal(b,p):best(b,p);move(ms[Math.floor(Math.random()*ms.length)])},1000)}}
+function move(m,origin){const movingPlayer=p;history.push({b:b.slice(),p,seen:seen.slice()});b=next(b,m);p=3-p;selected=-1;hintNode=-1;seen.push(key(b,p));if(!legal(b,p).length)ended=(p===1?'Ivory':'Jade')+' wins';else if(seen.filter(k=>k===key(b,p)).length>=3)ended='A peaceful draw';render();animateMove(m,movingPlayer,origin);if(!ended&&mode==='computer'&&p===2){timer=setTimeout(()=>{move(chooseComputerMove(b,p,$('difficulty').value))},1000)}}
 function tap(i){if(animating||ended||mode==='computer'&&p===2)return;if(b[i]===p){selected=selected===i?-1:i;hintNode=-1;render()}else if(!b[i]&&selected>=0){let m=legal(b,p).find(m=>m[0]===selected&&m[1]===i);if(m)move(m)}}
 $('restart').onclick=reset;$('undo').onclick=()=>{clearTimeout(timer);let s=history.pop();if(mode==='computer'&&s.p===2&&history.length)s=history.pop();if(s){b=s.b;p=s.p;seen=s.seen;ended='';selected=-1;hintNode=-1;render()}};$('hint').onclick=()=>{if(animating)return;let m=best(b,p)[0];if(m){selected=m[0];hintNode=m[0];render();$('message').textContent='Try this stone. The glowing point is its destination.'}};for(const m of ['computer','friend'])$(m).onclick=()=>{mode=m;$(m).classList.add('active');$(m==='computer'?'friend':'computer').classList.remove('active');reset()};$('difficulty').onchange=reset;reset();
 
@@ -93,4 +93,13 @@ function renderEndScreen(){
       },delay);
     }
   }
+}
+
+function chooseComputerMove(board,player,level){
+  const moves=legal(board,player),strong=best(board,player);
+  const weaker=moves.filter(m=>!strong.some(s=>s[0]===m[0]&&s[1]===m[1]));
+  let pool=strong;
+  if(level==='easy')pool=weaker.length&&Math.random()<.75?weaker:moves;
+  else if(level==='medium')pool=Math.random()<.45?moves:strong;
+  return pool[Math.floor(Math.random()*pool.length)];
 }
