@@ -1,0 +1,13 @@
+.git
+.git/**
+.github
+.github/**
+.wrangler
+.wrangler/**
+node_modules
+node_modules/**
+worker.mjs
+wrangler.jsonc
+package*.json
+*.test.mjs
+README.md
