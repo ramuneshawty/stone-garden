@@ -104,3 +104,6 @@ function chooseComputerMove(board,player,level){
   return pool[Math.floor(Math.random()*pool.length)];
 }
 
+
+// The leaderboard can submit the just-finished round even if the player joins afterward.
+window.StoneGardenLastRound=()=>ended?{game:roundId,mode,level:roundLevel,assisted:roundAssisted,result:ended==='Jade wins'?'win':ended==='Ivory wins'?'loss':'draw',moves:history.map(s=>s.m)}:null;
